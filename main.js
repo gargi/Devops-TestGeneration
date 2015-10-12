@@ -110,7 +110,7 @@ function generateTestCases()
 		var pathExists      = _.some(constraints, {kind: 'fileExists' });
 		var fileWithNoContent      = _.some(constraints, {kind: 'fileWithNoContent' });
 		var fileDoesNotExist     = _.some(constraints, {kind: 'fileDoesNotExist' });
-		var Phone_Input		 	= _.contains(functionConstraints[funcName].params, "phoneNumber");
+		var phoneno	= _.contains(functionConstraints[funcName].params, "phoneNumber");
 
 		// plug-in values for parameters
 		for( var c = 0; c < constraints.length; c++ )
@@ -120,16 +120,12 @@ function generateTestCases()
 			{
 				params[constraint.ident] = constraint.value;
 			}
-
-		//	if(Object.keys(params).length >1)
-			{
-				var args = Object.keys(params).map( function(k) {return params[k]; }).join(",");
-				content += "subject.{0}({1});\n".format(funcName, args );
-		//	}
-
+			var args = Object.keys(params).map( function(k) {return params[k]; }).join(",");
+			content += "subject.{0}({1});\n".format(funcName, args );
+		}
 		// Prepare function arguments.
 		var args = Object.keys(params).map( function(k) {return params[k]; }).join(",");
-}
+
 		if( pathExists || fileWithContent )
 		{
 			content += generateMockFsTestCases(pathExists,fileWithContent,!fileDoesNotExists,funcName, args);
@@ -142,42 +138,31 @@ function generateTestCases()
 			content += generateMockFsTestCases(pathExists,!fileWithContent,fileDoesNotExists,funcName, args);
 
 		}
-		else if(Phone_Input)
+		else if(phoneno)
 		{
-			if(Object.keys(params).length >1)
-			{
-				var Phone_Number ="1122122112";
-				var Phone_Format ="(NNN) NNN-NNNN";
-				var Options = "";
-				content+= generatePhoneTestCases(Phone_Number,Phone_Format,Options,funcName);
-				var Options = '{"normalize": true}';
-				content+= generatePhoneTestCases(Phone_Number,Phone_Format,Options,funcName);
-				var Options = '';
-
-				content+= generatePhoneTestCases(faker.phone.phoneNumber(),faker.phone.phoneNumberFormat(),Options,funcName);
+				content += generatePhoneTestCases("1111111111", "(NNN) NNN-NNNN", "", funcName, "" );
+				content += generatePhoneTestCases("2222222222", "(NNN) NNN-NNNN", '{"normalize": true}', funcName, "" );
+				content += generatePhoneTestCases(faker.phone.phoneNumber(), faker.phone.phoneFormats(), "", funcName, "");
 			}
 			else
 			{
 				// Emit simple test case.
 				content += "subject.{0}({1});\n".format(funcName, args );
 			}
-		}
+
 		content += "subject.{0}({1});\n".format('blackListNumber', "'2121111111'");
 	}
 	fs.writeFileSync('test.js', content, "utf8");
 
 }
 
-function generatePhoneTestCases(Phone_Number,Phone_Format,Options,funcName)
+function generatePhoneTestCases(phoneNumber,phoneNumberFormat, options, funcName, args)
 {
-	var args ='';
-	if(Options == '')
-	args="'"+Phone_Number+"','"+Phone_Format+"','"+Options+"'";
-	else
-	args="'"+Phone_Number+"','"+Phone_Format+"',"+Options;
-
-	var testCase = '';
-	testCase += "subject.{0}({1});\n".format(funcName, args );
+	if(options == '')
+			args+="'"+phoneNumber+"','"+phoneNumberFormat+"','"+options+"'";
+		else
+			args+="'"+phoneNumber+"','"+phoneNumberFormat+"',"+options;
+	var testCase = "subject.{0}({1});\n".format(funcName, args );
 	return testCase;
 }
 
@@ -336,6 +321,7 @@ function constraints(filePath)
 																}));
 															}
 														}
+
 														if( child.type === 'BinaryExpression' && child.operator == "<")
 														{
 															if( child.left.type == 'Identifier' && params.indexOf( child.left.name ) > -1)
@@ -356,6 +342,7 @@ function constraints(filePath)
 																		}));
 																	}
 																}
+
 																if( child.type == "CallExpression" &&
 																child.callee.property &&
 																child.callee.property.name =="readFileSync" )
