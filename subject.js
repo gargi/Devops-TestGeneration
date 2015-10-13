@@ -14,7 +14,7 @@ function weird(x,y,z, mode)
     if( x > 7 && y < 0 )
     {
         z = 33;
-    }    
+    }
     else if( z < 42 )
     {
         if( mode == "strict" )
@@ -43,7 +43,7 @@ function fileTest(dir, filePath)
 
    	    return false;
     }
-    
+
     var files = fs.readdirSync(dir);
     if( files.length == 0 )
     {
@@ -53,6 +53,7 @@ function fileTest(dir, filePath)
    if( fs.existsSync(filePath ))
    {
 		var buf = fs.readFileSync(filePath, "utf8");
+
 		if( buf.length > 0 )
 		{
 			return true;
@@ -70,7 +71,7 @@ function normalize(phoneNumber) {
 
 }
 
-function format(phoneNumber, formatString, options) 
+function format(phoneNumber, formatString, options)
 {
     // Normalize the phone number first unless not asked to do so in the options
     if (!options || !options.normalize) {
@@ -80,7 +81,7 @@ function format(phoneNumber, formatString, options)
     for ( var i = 0, l = phoneNumber.length; i < l; i++ ) {
       formatString = formatString.replace("N", phoneNumber[i]);
     }
-  
+
     return formatString;
 
 }
@@ -89,7 +90,7 @@ function blackListNumber(phoneNumber)
 {
 	var num = format(phoneNumber, "(NNN) NNN-NNNN");
 	var area = num.substring(1,4);
-	if( area == "212" )
+	if( area == "312" )
 	{
 		return true;
 	}
@@ -102,4 +103,3 @@ exports.format = format;
 exports.inc = inc;
 exports.weird = weird;
 exports.blackListNumber = blackListNumber;
-
