@@ -2,7 +2,7 @@
 
  Test generation using a combination of mocking, random testing, and feedback-directed testing to automatically increase testing coverage.
 
-#### Screenshots
+#### Coverage Screenshots
 
 ![](https://github.com/gsrajadh/Devops-TestGeneration/blob/master/CoverageReport.png)  
 
